@@ -12,7 +12,7 @@ import { getCedraClient } from "../helper";
 
 describe("coin", () => {
   test("it generates a transfer coin transaction with CedraCoin coin type", async () => {
-    const config = new CedraConfig({ network: Network.TESTNET });
+    const config = new CedraConfig({ network: Network.LOCAL });
     const cedra = new Cedra(config);
     const sender = Account.generate();
     const recipient = Account.generate();

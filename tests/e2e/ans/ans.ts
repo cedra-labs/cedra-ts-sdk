@@ -624,9 +624,9 @@ describe("ANS", () => {
   });
 
   describe("can get names", () => {
-    const testnet = new Cedra(
+    const local = new Cedra(
       new CedraConfig({
-        network: Network.TESTNET,
+        network: Network.LOCAL,
       }),
     );
 
@@ -635,26 +635,26 @@ describe("ANS", () => {
     const DOMAIN = "8923ulahsdjfaiu";
 
     test("returns all the names for an account", async () => {
-      const res = await testnet.ans.getAccountNames({ accountAddress: ACCOUNT_ADDRESS_1 });
+      const res = await local.ans.getAccountNames({ accountAddress: ACCOUNT_ADDRESS_1 });
       expect(res.length).toBe(4);
     });
 
     test("returns only the domains for an account", async () => {
-      const res = await testnet.ans.getAccountDomains({ accountAddress: ACCOUNT_ADDRESS_1 });
+      const res = await local.ans.getAccountDomains({ accountAddress: ACCOUNT_ADDRESS_1 });
       expect(res.length).toBe(2);
       // None of our results should have a subdomain
       expect(res.find((name) => Boolean(name.subdomain))).toBeFalsy();
     });
 
     test("returns only the subdomains for an account", async () => {
-      const res = await testnet.ans.getAccountSubdomains({ accountAddress: ACCOUNT_ADDRESS_1 });
+      const res = await local.ans.getAccountSubdomains({ accountAddress: ACCOUNT_ADDRESS_1 });
       expect(res.length).toBe(2);
       // All our results should have a subdomain
       expect(res.find((name) => !name.subdomain)).toBeFalsy();
     });
 
     test("returns only the subdomains names for a domain", async () => {
-      const res = await testnet.ans.getDomainSubdomains({ domain: DOMAIN });
+      const res = await local.ans.getDomainSubdomains({ domain: DOMAIN });
       expect(res.length).toBe(1);
       // All our results should have a subdomain
       expect(res.find((name) => !name.subdomain)).toBeFalsy();
@@ -663,13 +663,13 @@ describe("ANS", () => {
     test("accommodates where, pagination, and ordering", async () => {
       let res: GetANSNameResponse;
 
-      res = await testnet.ans.getAccountNames({
+      res = await local.ans.getAccountNames({
         accountAddress: ACCOUNT_ADDRESS_1,
         options: { limit: 1 },
       });
       expect(res.length).toBe(1);
 
-      res = await testnet.ans.getAccountNames({
+      res = await local.ans.getAccountNames({
         accountAddress: ACCOUNT_ADDRESS_1,
         options: {
           where: {
@@ -680,23 +680,23 @@ describe("ANS", () => {
       expect(res[0].domain).toBe(DOMAIN);
     });
 
-    // TODO: When we have local testnet, test order here
+    // TODO: When we have local local, test order here
   });
 
   describe("query an individual name", () => {
-    const testnet = new Cedra(
+    const local = new Cedra(
       new CedraConfig({
-        network: Network.TESTNET,
+        network: Network.LOCAL,
       }),
     );
 
     const domain = "8923ulahsdjfaiu";
 
     test("returns domains subdomains", async () => {
-      const res1 = await testnet.ans.getName({ name: `not-a-name-${randomString()}` });
+      const res1 = await local.ans.getName({ name: `not-a-name-${randomString()}` });
       expect(res1).toBeFalsy();
 
-      const res2 = await testnet.ans.getName({ name: domain });
+      const res2 = await local.ans.getName({ name: domain });
       expect(res2).toBeTruthy();
     });
   });

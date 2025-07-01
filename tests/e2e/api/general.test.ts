@@ -182,8 +182,8 @@ describe("general api", () => {
   });
 });
 
-describe("general api (requires testnet)", () => {
-  const { cedra } = getCedraClient({ network: Network.TESTNET });
+describe("general api (requires local)", () => {
+  const { cedra } = getCedraClient({ network: Network.LOCAL });
   test("it fetches data with a custom graphql query", async () => {
     const query: GraphqlQuery = {
       query: `query MyQuery {

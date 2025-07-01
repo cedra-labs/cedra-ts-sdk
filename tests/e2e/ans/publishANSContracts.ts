@@ -5,7 +5,7 @@ import { LOCAL_ANS_ACCOUNT_PK, LOCAL_ANS_ACCOUNT_ADDRESS } from "../../../src/in
 
 /**
  * TS SDK supports ANS. Since ANS contract is not part of cedra-framework
- * we need to get the ANS contract, publish it to local testnet and test against it.
+ * we need to get the ANS contract, publish it to local local and test against it.
  * This script clones the cedra-names-contracts repo {@link https://github.com/cedra-labs/cedra-names-contracts},
  * uses a pre created account address and private key to fund that account and
  * then publish the contract under that account.

@@ -14,24 +14,24 @@ import {
 describe("cedra config", () => {
   test("it should set urls based on a local network", async () => {
     const settings: CedraSettings = {
-      network: Network.TESTNET,
+      network: Network.LOCAL,
     };
     const cedraConfig = new CedraConfig(settings);
     expect(cedraConfig.network).toEqual("local");
-    expect(cedraConfig.getRequestUrl(CedraApiType.FULLNODE)).toBe(NetworkToNodeAPI[Network.TESTNET]);
-    expect(cedraConfig.getRequestUrl(CedraApiType.FAUCET)).toBe(NetworkToFaucetAPI[Network.TESTNET]);
-    expect(cedraConfig.getRequestUrl(CedraApiType.INDEXER)).toBe(NetworkToIndexerAPI[Network.TESTNET]);
+    expect(cedraConfig.getRequestUrl(CedraApiType.FULLNODE)).toBe(NetworkToNodeAPI[Network.LOCAL]);
+    expect(cedraConfig.getRequestUrl(CedraApiType.FAUCET)).toBe(NetworkToFaucetAPI[Network.LOCAL]);
+    expect(cedraConfig.getRequestUrl(CedraApiType.INDEXER)).toBe(NetworkToIndexerAPI[Network.LOCAL]);
   });
 
-  test("it should set urls based on testnet", async () => {
+  test("it should set urls based on local", async () => {
     const settings: CedraSettings = {
-      network: Network.TESTNET,
+      network: Network.LOCAL,
     };
     const cedraConfig = new CedraConfig(settings);
-    expect(cedraConfig.network).toEqual("testnet");
-    expect(cedraConfig.getRequestUrl(CedraApiType.FULLNODE)).toBe(NetworkToNodeAPI[Network.TESTNET]);
+    expect(cedraConfig.network).toEqual("local");
+    expect(cedraConfig.getRequestUrl(CedraApiType.FULLNODE)).toBe(NetworkToNodeAPI[Network.LOCAL]);
     expect(() => cedraConfig.getRequestUrl(CedraApiType.FAUCET)).toThrow();
-    expect(cedraConfig.getRequestUrl(CedraApiType.INDEXER)).toBe(NetworkToIndexerAPI[Network.TESTNET]);
+    expect(cedraConfig.getRequestUrl(CedraApiType.INDEXER)).toBe(NetworkToIndexerAPI[Network.LOCAL]);
   });
 
   test("it should set urls based on mainnet", async () => {

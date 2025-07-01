@@ -40,10 +40,10 @@ export const NetworkToFaucetAPI: Record<string, string> = {
  * @category Network
  */
 export const NetworkToPepperAPI: Record<string, string> = {
-  mainnet: "https://api.mainnet.cedralabs.com/keyless/pepper/v0",
-  testnet: "https://api.testnet.cedralabs.com/keyless/pepper/v0",
+  mainnet: "https://testnet.cedra.dev/keyless/pepper/v0",
+  testnet: "https://testnet.cedra.dev/keyless/pepper/v0",
   devnet: "https://testnet.cedra.dev/keyless/pepper/v0",
-  // Use the devnet service for local environment
+  // Use the devnetservice for local environment
   local: "https://testnet.cedra.dev/keyless/pepper/v0",
 };
 
@@ -52,8 +52,8 @@ export const NetworkToPepperAPI: Record<string, string> = {
  * @category Network
  */
 export const NetworkToProverAPI: Record<string, string> = {
-  mainnet: "https://api.mainnet.cedralabs.com/keyless/prover/v0",
-  testnet: "https://api.testnet.cedralabs.com/keyless/prover/v0",
+  mainnet: "https://testnet.cedra.dev/keyless/prover/v0",
+  testnet: "https://testnet.cedra.dev/keyless/prover/v0",
   devnet: "https://testnet.cedra.dev/keyless/prover/v0",
   // Use the devnet service for local environment
   local: "https://testnet.cedra.dev/keyless/prover/v0",

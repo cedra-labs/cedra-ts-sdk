@@ -10,7 +10,7 @@ import {
 } from "../transaction/helper";
 
 describe("abstraction api", () => {
-  const { cedra } = getCedraClient({ network: Network.TESTNET });
+  const { cedra } = getCedraClient({ network: Network.LOCAL });
 
   describe("account abstraction", () => {
     describe("enable and disable account abstraction", () => {
