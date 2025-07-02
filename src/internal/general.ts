@@ -11,7 +11,7 @@
 
 import { CedraConfig } from "../api/cedraConfig";
 import { getCedraFullNode, postCedraIndexer } from "../client";
-import { GetChainTopUserTransactionsResponse, GetProcessorStatusResponse, GraphqlQuery, LedgerInfo } from "../types";
+import { GetChainTopUserTransactionsResponse, GraphqlQuery, LedgerInfo } from "../types";
 import { GetChainTopUserTransactionsQuery, GetProcessorStatusQuery } from "../types/generated/operations";
 import { GetChainTopUserTransactions, GetProcessorStatus } from "../types/generated/queries";
 import { ProcessorType } from "../utils/const";
@@ -95,12 +95,9 @@ export async function queryIndexer<T extends {}>(args: {
  * @returns The statuses of the processors.
  * @group Implementation
  */
-export async function getProcessorStatuses(args: { cedraConfig: CedraConfig }): Promise<GetProcessorStatusResponse> {
+export async function getProcessorStatuses(args: { cedraConfig: CedraConfig }): Promise<ProcessorStatus[]> {
   const { cedraConfig } = args;
-
-  const graphqlQuery = {
-    query: GetProcessorStatus,
-  };
+  const graphqlQuery = { query: GetProcessorStatus };
 
   const data = await queryIndexer<GetProcessorStatusQuery>({
     cedraConfig,
@@ -108,7 +105,7 @@ export async function getProcessorStatuses(args: { cedraConfig: CedraConfig }): 
     originMethod: "getProcessorStatuses",
   });
 
-  return data.processor_metadata_processor_status;
+  return [...(data.processor_status || []), ...(data.processor_metadata_processor_status || [])];
 }
 
 /**
@@ -121,9 +118,11 @@ export async function getProcessorStatuses(args: { cedraConfig: CedraConfig }): 
  */
 export async function getIndexerLastSuccessVersion(args: { cedraConfig: CedraConfig }): Promise<bigint> {
   const response = await getProcessorStatuses({ cedraConfig: args.cedraConfig });
+  if (!response.length) {
+    throw new Error("No processor status available");
+  }
   return BigInt(response[0].last_success_version);
 }
-
 /**
  * Retrieves the status of a specified processor in the Cedra network.
  * This function allows you to check the current operational status of a processor, which can be useful for monitoring and troubleshooting.
@@ -134,28 +133,49 @@ export async function getIndexerLastSuccessVersion(args: { cedraConfig: CedraCon
  * @returns The status of the specified processor.
  * @group Implementation
  */
-export async function getProcessorStatus(args: {
+export async function getProcessorStatus({
+  cedraConfig,
+  processorType,
+}: {
   cedraConfig: CedraConfig;
-  processorType: ProcessorType;
-}): Promise<GetProcessorStatusResponse[0]> {
-  const { cedraConfig, processorType } = args;
-
-  const whereCondition: { processor: { _eq: string } } = {
-    processor: { _eq: processorType },
-  };
-
-  const graphqlQuery = {
-    query: GetProcessorStatus,
-    variables: {
-      where_condition: whereCondition,
-    },
-  };
-
-  const data = await queryIndexer<GetProcessorStatusQuery>({
+  processorType: string;
+}): Promise<ProcessorStatus> {
+  const data = await queryIndexer<GetProcessorStatusResponse>({
     cedraConfig,
-    query: graphqlQuery,
+    query: { query: GetProcessorStatus },
     originMethod: "getProcessorStatus",
   });
 
-  return data.processor_metadata_processor_status[0];
+  // Find the processor in either array
+  const processor =
+    data.processor_status?.find((p) => p.processor === processorType) ||
+    data.processor_metadata_processor_status?.find((p) => p.processor === processorType);
+
+  if (!processor) {
+    throw new Error(`Processor ${processorType} not found`);
+  }
+
+  return processor;
 }
+
+export async function getProcessorVersion({
+  cedraConfig,
+  processorType,
+}: {
+  cedraConfig: CedraConfig;
+  processorType: string;
+}): Promise<bigint> {
+  const status = await getProcessorStatus({ cedraConfig, processorType });
+  return BigInt(status.last_success_version);
+}
+
+interface ProcessorStatus {
+  last_success_version: string;
+  processor: string;
+  last_updated: string;
+}
+
+export type GetProcessorStatusResponse = {
+  processor_status: ProcessorStatus[];
+  processor_metadata_processor_status: ProcessorStatus[];
+};

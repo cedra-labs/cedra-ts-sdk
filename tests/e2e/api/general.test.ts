@@ -76,7 +76,7 @@ describe("general api", () => {
       };
 
       const symbol = (await cedra.view<[string]>({ payload }))[0];
-      expect(symbol).toEqual("CEDRA");
+      expect(symbol).toEqual("Cedra");
 
       const payload2: InputViewFunctionData = {
         function: "0x1::coin::decimals",
@@ -155,7 +155,7 @@ describe("general api", () => {
       };
 
       const symbol = (await cedra.viewJson<[string]>({ payload }))[0];
-      expect(symbol).toEqual("CEDRA");
+      expect(symbol).toEqual("Cedra");
 
       const payload2: InputViewFunctionJsonData = {
         function: "0x1::coin::decimals",
@@ -182,8 +182,8 @@ describe("general api", () => {
   });
 });
 
-describe("general api (requires local)", () => {
-  const { cedra } = getCedraClient({ network: Network.LOCAL });
+describe("general api (requires testnet)", () => {
+  const { cedra } = getCedraClient({ network: Network.TESTNET });
   test("it fetches data with a custom graphql query", async () => {
     const query: GraphqlQuery = {
       query: `query MyQuery {
@@ -201,7 +201,7 @@ describe("general api (requires local)", () => {
       ];
     }>({ query });
 
-    expect(chainId.ledger_infos[0].chain_id).toBe(2);
+    expect(chainId.ledger_infos[0].chain_id).toBe(4);
   });
 
   test("it should fetch chain top user transactions", async () => {

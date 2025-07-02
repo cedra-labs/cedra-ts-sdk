@@ -45,9 +45,9 @@ describe("table", () => {
       options: { where: { table_handle: { _eq: handle }, transaction_version: { _eq: 0 } } },
     });
 
-    expect(data[0].decoded_key).toEqual("0x619dc29a0aac8fa146714058e8dd6d2d0f3bdf5f6331907bf91f3acd81e6935");
+    expect(data[0].decoded_key).toEqual("0x36acc76d7142b1b20fb228856eb6726517b58d700eb8ba7f1cab236bc595a93");
     expect(data[0].decoded_value).toEqual("10");
-    expect(data[0].key).toEqual("0x0619dc29a0aac8fa146714058e8dd6d2d0f3bdf5f6331907bf91f3acd81e6935");
+    expect(data[0].key).toEqual("0x036acc76d7142b1b20fb228856eb6726517b58d700eb8ba7f1cab236bc595a93");
   });
 
   test("it fetches table items metadata data", async () => {

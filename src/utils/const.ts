@@ -71,7 +71,7 @@ export const RAW_TRANSACTION_SALT = "CEDRA::RawTransaction";
 export const RAW_TRANSACTION_WITH_DATA_SALT = "CEDRA::RawTransactionWithData";
 
 /**
- * Supported processor types for the indexer API, sourced from the processor_status table in the indexer database.
+ * Supported processor types for the indexer API, sourced from the processor_metadata_processor_status table in the indexer database.
  * {@link https://cloud.hasura.io/public/graphiql?endpoint=https://api.mainnet.cedralabs.com/v1/graphql}
  * @group Implementation
  * @category Utils

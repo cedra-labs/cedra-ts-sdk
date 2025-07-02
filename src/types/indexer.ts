@@ -122,14 +122,21 @@ export type GetCollectionDataResponse = GetCollectionDataQuery["current_collecti
  */
 export type GetTokenDataResponse = GetTokenDataQuery["current_token_datas_v2"][0];
 
+interface ProcessorStatus {
+  last_success_version: string;
+  processor: string;
+  last_updated: string;
+}
+
 /**
  * The status of the processor as returned by the GetProcessorStatusQuery.
  * @group Implementation
  * @category Types
  */
-export type GetProcessorStatusResponse = GetProcessorStatusQuery["processor_metadata_processor_status"];
-
-/**
+export type GetProcessorStatusResponse = {
+  processor_status?: ProcessorStatus[];
+  processor_metadata_processor_status?: ProcessorStatus[];
+}; /**
  * The response containing metadata for a fungible asset.
  * @group Implementation
  * @category Types

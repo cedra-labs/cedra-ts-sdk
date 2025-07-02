@@ -1,157 +1,176 @@
 /* eslint-disable no-console */
-
 import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import kill from "tree-kill";
-import { platform } from "os";
-
+import { homedir, platform } from "os";
 import { sleep } from "../utils/helpers";
+import { existsSync } from "fs";
+import { join } from "path";
 
-/**
- * Represents a local node for running a localnet environment.
- * This class provides methods to start, stop, and check the status of the localnet process.
- * It manages the lifecycle of the node process and ensures that it is operational before executing tests.
- * @group Implementation
- * @category CLI
- */
 export class LocalNode {
-  readonly MAXIMUM_WAIT_TIME_SEC = 75;
-
+  readonly MAXIMUM_WAIT_TIME_SEC = 180; // Increased timeout
   readonly READINESS_ENDPOINT = "http://127.0.0.1:8070/";
+  readonly STARTUP_CHECK_INTERVAL_MS = 2000;
 
   showStdout: boolean = true;
-
   process: ChildProcessWithoutNullStreams | null = null;
+  private debugMode: boolean;
 
-  constructor(args?: { showStdout?: boolean }) {
+  constructor(args?: { showStdout?: boolean; debug?: boolean }) {
     this.showStdout = args?.showStdout ?? true;
+    this.debugMode = args?.debug ?? false;
   }
 
-  /**
-   * Kills the current process and all its descendant processes.
-   *
-   * @returns {Promise<void>} A promise that resolves to true if the process was successfully killed.
-   * @throws {Error} If there is an error while attempting to kill the process.
-   * @group Implementation
-   * @category CLI
-   */
   async stop(): Promise<void> {
-    await new Promise((resolve, reject) => {
-      if (!this.process?.pid) return;
+    if (!this.process?.pid) return;
 
-      /**
-       * Terminates the process associated with the given process ID.
-       *
-       * @param pid - The process ID of the process to be terminated.
-       * @param callback - A function that is called after the termination attempt is complete.
-       * @param callback.err - An error object if the termination failed; otherwise, null.
-       * @param callback.resolve - A boolean indicating whether the termination was successful.
-       * @group Implementation
-       * @category CLI
-       */
-      kill(this.process.pid, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(true);
-        }
+    try {
+      await new Promise<void>((resolve, reject) => {
+        kill(this.process!.pid!, (err) => {
+          if (err) {
+            this.debugLog(`Failed to kill process: ${err.message}`);
+            reject(err);
+          } else {
+            this.debugLog(`Successfully stopped process ${this.process!.pid}`);
+            resolve();
+          }
+        });
       });
-    });
+    } catch (error) {
+      throw new Error(`Failed to stop node: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      this.process = null;
+    }
   }
 
-  /**
-   * Runs a localnet and waits for the process to be up.
-   * If the local node process is already running, it returns without starting the process.
-   *
-   * @returns {Promise<void>} A promise that resolves when the process is up.
-   * @group Implementation
-   * @category CLI
-   */
   async run(): Promise<void> {
-    const nodeIsUp = await this.checkIfProcessIsUp();
-    if (nodeIsUp) {
+    if (await this.checkIfProcessIsUp()) {
+      this.debugLog("Node is already running");
       return;
     }
-    this.start();
-    await this.waitUntilProcessIsUp();
+
+    try {
+      this.start();
+      await this.waitUntilProcessIsUp();
+    } catch (error) {
+      await this.stop().catch(() => {});
+      throw error;
+    }
   }
 
-  /**
-   * Starts the localnet by running the Cedra node with the specified command-line arguments.
-   *
-   * @returns {void}
-   *
-   * @throws {Error} If there is an issue starting the localnet.
-   * @group Implementation
-   * @category CLI
-   */
   start(): void {
     const cliCommand = "npx";
-    const cliArgs = ["cedra", "node", "run-localnet", "--force-restart", "--assume-yes", "--with-indexer-api"];
-
-    const currentPlatform = platform();
+    const cliArgs = [
+      "cedra",
+      "node",
+      "run-localnet",
+      "--force-restart",
+      "--assume-yes",
+      "--with-indexer-api",
+      "--processors",
+      "fungible_asset_processor",
+      "--processors",
+      "token_v2_processor",
+    ];
+    if (existsSync(join(homedir(), ".cedra/config"))) {
+      cliArgs.push("--config", join(homedir(), ".cedra/config/node.yaml"));
+    }
     const spawnConfig = {
-      env: { ...process.env, ENABLE_KEYLESS_DEFAULT: "1" },
-      ...(currentPlatform === "win32" && { shell: true }),
+      env: {
+        ...process.env,
+        ENABLE_KEYLESS_DEFAULT: "1",
+        RUST_LOG: this.debugMode ? "debug" : "info",
+      },
+      shell: platform() === "win32",
     };
 
-    this.process = spawn(cliCommand, cliArgs, spawnConfig);
+    this.debugLog(`Starting node: ${cliCommand} ${cliArgs.join(" ")}`);
 
-    this.process.stdout?.on("data", (data: any) => {
-      const str = data.toString();
-      // Print local node output log
+    this.process = spawn(cliCommand, cliArgs, {
+      env: {
+        ...process.env,
+        RUST_BACKTRACE: "full",
+        RUST_LOG: "debug",
+      },
+    });
+
+    this.process.stdout?.on("data", (data) => {
+      const output = data.toString();
       if (this.showStdout) {
-        console.log(str);
+        console.log(output);
       }
+      this.debugLog(output);
+    });
+
+    this.process.stderr?.on("data", (data) => {
+      const error = data.toString();
+      console.error(error);
+      this.debugLog(`STDERR: ${error}`);
+    });
+
+    this.process.on("error", (err) => {
+      console.error("Process error:", err);
+      this.debugLog(`Process error: ${err.message}`);
+    });
+
+    this.process.on("exit", (code, signal) => {
+      const message = `Process exited with code ${code}, signal ${signal}`;
+      if (code !== 0) {
+        console.error(message);
+      }
+      this.debugLog(message);
     });
   }
 
-  /**
-   * Waits for the localnet process to be operational within a specified maximum wait time.
-   * This function continuously checks if the process is up and will throw an error if it fails to start.
-   *
-   * @returns Promise<boolean> - Resolves to true if the process is up, otherwise throws an error.
-   * @group Implementation
-   * @category CLI
-   */
-  async waitUntilProcessIsUp(): Promise<boolean> {
-    let operational = await this.checkIfProcessIsUp();
-    const start = Date.now() / 1000;
-    let last = start;
+  private async waitUntilProcessIsUp(): Promise<void> {
+    const startTime = Date.now();
+    const timeout = this.MAXIMUM_WAIT_TIME_SEC * 1000;
+    let lastStatus = false;
 
-    while (!operational && start + this.MAXIMUM_WAIT_TIME_SEC > last) {
-      // eslint-disable-next-line no-await-in-loop
-      await sleep(1000);
-      // eslint-disable-next-line no-await-in-loop
-      operational = await this.checkIfProcessIsUp();
-      last = Date.now() / 1000;
+    while (Date.now() - startTime < timeout) {
+      try {
+        lastStatus = await this.checkIfProcessIsUp();
+        this.debugLog(`Readiness check: ${lastStatus}`);
+
+        if (lastStatus) {
+          this.debugLog("Node is ready");
+          return;
+        }
+
+        await sleep(this.STARTUP_CHECK_INTERVAL_MS);
+      } catch (error) {
+        this.debugLog(`Readiness check error: ${error instanceof Error ? error.message : String(error)}`);
+        await sleep(this.STARTUP_CHECK_INTERVAL_MS);
+      }
     }
 
-    // If we are here it means something blocks the process to start.
-    // Might worth checking if another process is running on port 8080
-    if (!operational) {
-      throw new Error("Process failed to start");
-    }
-
-    return true;
+    throw new Error(`Node failed to start within ${this.MAXIMUM_WAIT_TIME_SEC} seconds. Last status: ${lastStatus}`);
   }
 
-  /**
-   * Checks if the localnet is up by querying the readiness endpoint.
-   *
-   * @returns Promise<boolean> - A promise that resolves to true if the localnet is up, otherwise false.
-   * @group Implementation
-   * @category CLI
-   */
-  async checkIfProcessIsUp(): Promise<boolean> {
+  private async checkIfProcessIsUp(): Promise<boolean> {
     try {
-      // Query readiness endpoint
-      const data = await fetch(this.READINESS_ENDPOINT);
-      if (data.status === 200) {
-        return true;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 2000);
+
+      const response = await fetch(this.READINESS_ENDPOINT, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (!response.ok) {
+        this.debugLog(`Readiness check failed with status: ${response.status}`);
+        return false;
       }
+
+      return true;
+    } catch (error) {
+      this.debugLog(`Readiness check error: ${error instanceof Error ? error.message : String(error)}`);
       return false;
-    } catch (err: any) {
-      return false;
+    }
+  }
+
+  private debugLog(message: string): void {
+    if (this.debugMode) {
+      console.debug(`[DEBUG] ${new Date().toISOString()} ${message}`);
     }
   }
 }

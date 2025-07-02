@@ -545,11 +545,12 @@ export type GetObjectDataQuery = {
 };
 
 export type GetProcessorStatusQueryVariables = Types.Exact<{
-  where_condition?: Types.InputMaybe<Types.ProcessorMetadataProcessorStatusBoolExp>;
+  where_condition?: Types.InputMaybe<Types.ProcessorStatusBoolExp>;
 }>;
 
 export type GetProcessorStatusQuery = {
-  processor_metadata_processor_status: Array<{ last_success_version: any; processor: string; last_updated: any }>;
+  processor_status: Array<{ last_success_version: any; processor: string; last_updated: any }>;
+  processor_metadata_processor_status?: Array<{ last_success_version: any; processor: string; last_updated: any }>;
 };
 
 export type GetTableItemsDataQueryVariables = Types.Exact<{

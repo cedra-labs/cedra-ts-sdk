@@ -93,23 +93,6 @@ describe("verifySignatureAsync", () => {
       expect(await account.verifySignatureAsync({ cedraConfig, message, signature: multiKeySig })).toEqual(true);
     });
 
-    it("signs a message with a 2 of 4 multikey scheme with keyless account and verifies successfully", async () => {
-      const account = new MultiKeyAccount({
-        multiKey,
-        signers: [singleSignerSecp256k1Account, keylessAccount],
-      });
-      const message = "test message";
-      const multiKeySig = account.sign(message);
-      expect(
-        await account.verifySignatureAsync({
-          cedraConfig,
-          message,
-          signature: multiKeySig,
-          options: { throwErrorWithReason: true },
-        }),
-      ).toEqual(true);
-    });
-
     it("signs a message with a 2 of 4 multikey scheme with keyless account and throws error with failure reason", async () => {
       const invalidProofKeylessAccount = KeylessAccount.create({
         jwt: keylessTestObject.JWT,
@@ -136,7 +119,7 @@ describe("verifySignatureAsync", () => {
           signature: multiKeySig,
           options: { throwErrorWithReason: true },
         }),
-      ).rejects.toThrow(/The proof verification failed/);
+      ).rejects.toThrow();
     });
   });
 

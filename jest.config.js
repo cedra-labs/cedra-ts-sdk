@@ -1,10 +1,3 @@
-const path = require("path");
-const envPath = path.resolve(__dirname, ".env.development");
-
-require("dotenv").config({
-  path: [envPath],
-});
-
 /** @type {import("ts-jest/dist/types").InitialOptionsTsJest} */
 module.exports = {
   preset: "ts-jest",
@@ -15,15 +8,14 @@ module.exports = {
   coveragePathIgnorePatterns: [
     "./src/internal/queries/",
     "./src/types/generated",
-    // "./tests/e2e/ans/publishANSContracts.ts",
-    "./confidential-assets/*",
+    "./tests/e2e/ans/publishANSContracts.ts",
   ],
-  testPathIgnorePatterns: ["dist/*", "examples/*", "confidential-assets/*"],
+  testPathIgnorePatterns: ["dist/*", "examples/*"],
   collectCoverage: true,
   setupFiles: ["dotenv/config"],
   coverageThreshold: {
     global: {
-      branches: 40, // 90,
+      branches: 50, // 90,
       functions: 50, // 95,
       lines: 50, // 95,
       statements: 50, // 95,

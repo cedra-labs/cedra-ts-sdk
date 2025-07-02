@@ -20,7 +20,7 @@ describe("abstraction api", () => {
 
       beforeAll(async () => {
         await cedra.fundAccount({ accountAddress: alice.accountAddress, amount: FUND_AMOUNT });
-      });
+      }, 10000);
 
       it("should fetch account abstraction is enabled to be false", async () => {
         const status = await cedra.abstraction.isAccountAbstractionEnabled({
@@ -69,7 +69,7 @@ describe("abstraction api", () => {
         await cedra.fundAccount({ accountAddress: alice.accountAddress, amount: FUND_AMOUNT });
         await cedra.fundAccount({ accountAddress: deployer.accountAddress, amount: FUND_AMOUNT });
         await publishAnyAuthenticatorAAPackage(cedra, deployer);
-      });
+      }, 10000);
 
       it("should enable account abstraction", async () => {
         const txn = await cedra.abstraction.enableAccountAbstractionTransaction({
@@ -129,7 +129,7 @@ describe("abstraction api", () => {
         await cedra.fundAccount({ accountAddress: alice.accountAddress, amount: FUND_AMOUNT });
         await cedra.fundAccount({ accountAddress: deployer.accountAddress, amount: FUND_AMOUNT });
         await publishHelloWorldAAPackage(cedra, deployer);
-      });
+      }, 10000);
 
       it("should enable account abstraction", async () => {
         const txn = await cedra.abstraction.enableAccountAbstractionTransaction({

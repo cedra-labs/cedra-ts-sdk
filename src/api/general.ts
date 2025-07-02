@@ -23,6 +23,7 @@ import {
 } from "../types";
 import { ProcessorType } from "../utils/const";
 import { InputViewFunctionData, InputViewFunctionJsonData } from "../transactions";
+import { ProcessorStatus } from "../types/generated/types";
 
 /**
  * A class to query various Cedra-related information and perform operations on the Cedra blockchain.
@@ -345,7 +346,7 @@ export class General {
    * ```
    * @group General
    */
-  async getProcessorStatus(processorType: ProcessorType): Promise<GetProcessorStatusResponse[0]> {
+  async getProcessorStatus(processorType: ProcessorType): Promise<ProcessorStatus> {
     return getProcessorStatus({ cedraConfig: this.config, processorType });
   }
 }

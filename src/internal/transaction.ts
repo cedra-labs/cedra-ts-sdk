@@ -328,7 +328,7 @@ export async function waitForIndexer(args: {
       // Get the last success version from the specific processor
       // eslint-disable-next-line no-await-in-loop
       const processor = await getProcessorStatus({ cedraConfig, processorType });
-      indexerVersion = processor.last_success_version;
+      indexerVersion = BigInt(processor.last_success_version);
     }
 
     if (indexerVersion >= minimumLedgerVersion) {

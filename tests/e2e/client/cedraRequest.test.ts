@@ -155,7 +155,7 @@ describe("cedra request", () => {
             expect(error.data).toEqual({
               message:
                 // eslint-disable-next-line quotes
-                'failed to parse path `txn_hash`: failed to parse "string(HashValue)": unable to parse HashValue',
+                'failed to parse path `param0`: failed to parse \"string(HashValue)\": unable to parse HashValue',
               error_code: "web_framework_error",
               vm_error_code: null,
             });

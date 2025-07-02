@@ -53,6 +53,7 @@
   "dependencies": {
     "@cedra-labs/cedra-cli": "^1.2.0",
     "@cedra-labs/cedra-client": "^2.0.0",
+    "@cedra-labs/ts-sdk": "file:../cedra-ts-sdk",
     "@noble/curves": "^1.6.0",
     "@noble/hashes": "^1.5.0",
     "@scure/bip32": "^1.4.0",
@@ -61,8 +62,7 @@
     "form-data": "^4.0.0",
     "js-base64": "^3.7.7",
     "jwt-decode": "^4.0.0",
-    "poseidon-lite": "^0.2.0",
-    "@cedra-labs/ts-sdk": "file:../cedra-ts-sdk"
+    "poseidon-lite": "^0.2.1"
   },
   "devDependencies": {
     "@babel/traverse": "^7.26.10",
@@ -76,28 +76,28 @@
     "@types/base-64": "^1.0.2",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^20.17.25",
+    "@types/node": "^20.19.2",
     "@typescript-eslint/eslint-plugin": "^8.27.0",
     "@typescript-eslint/parser": "^8.27.0",
-    "dotenv": "^16.4.7",
-    "eslint": "^9.23.0",
+    "dotenv": "^16.6.1",
+    "eslint": "^9.25.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-import": "^2.31.0",
+    "globals": "^16.3.0",
     "graphql": "^16.10.0",
-    "globals": "^16.0.0",
     "graphql-request": "^7.1.2",
     "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
     "prettier": "^3.5.3",
     "tree-kill": "^1.2.2",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "^29.3.2",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsup": "^8.4.0",
-    "typedoc": "^0.28.1",
+    "typedoc": "^0.28.3",
     "typedoc-plugin-missing-exports": "^4.0.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "version": "2.2.2"
 }
