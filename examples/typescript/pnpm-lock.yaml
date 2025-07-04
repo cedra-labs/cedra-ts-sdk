@@ -4,15 +4,12 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@cedra-labs/ts-sdk': file:../../
-
 importers:
 
   .:
     dependencies:
       '@cedra-labs/ts-sdk':
-        specifier: file:../..
+        specifier: file:../../
         version: file:../..(got@11.8.6)
       '@noble/curves':
         specifier: 1.8.1
