@@ -102,7 +102,7 @@ await cedra.fundAccount({
 
 ### Step 4: Send Your First Transaction
 
-See the complete example in the [Submit transaction](#submit-transaction-tutorial) section below.
+See the complete example in the [Transfer examples](https://github.com/cedra-labs/cedra-ts-sdk/blob/main/examples/typescript/transfer_with_fa_address.ts) section below.
 
 ### Reading Data From Onchain
 
