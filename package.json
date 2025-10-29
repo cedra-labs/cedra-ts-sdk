@@ -8,7 +8,7 @@
   "bugs": {
     "url": "https://github.com/cedra-labs/cedra-ts-sdk/issues/new/choose"
   },
-  "homepage": "https://cedra-labs.github.io/cedra-ts-sdk/",
+  "homepage": "https://github.com/cedra-labs/cedra-ts-sdk/",
   "main": "dist/common/index.js",
   "module": "dist/esm/index.mjs",
   "exports": {
