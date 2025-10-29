@@ -420,7 +420,7 @@ export async function generateRawTransaction(args: {
     faAddress: options?.faAddress,
   };
 
-  return new CommissionRawTransaction(
+  return new RawTransaction(
       AccountAddress.from(sender),
       BigInt(sequenceNumber),
       payload,
