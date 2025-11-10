@@ -421,15 +421,15 @@ export async function generateRawTransaction(args: {
   };
 
   return new RawTransaction(
-      AccountAddress.from(sender),
-      BigInt(sequenceNumber),
-      payload,
-      BigInt(maxGasAmount),
-      BigInt(gasUnitPrice),
-      BigInt(expireTimestamp),
-      new ChainId(chainId),
-      faAddress ?? parseTypeTag("0x1::CedraCoin::cedra"),
-    );
+    AccountAddress.from(sender),
+    BigInt(sequenceNumber),
+    payload,
+    BigInt(maxGasAmount),
+    BigInt(gasUnitPrice),
+    BigInt(expireTimestamp),
+    new ChainId(chainId),
+    faAddress ?? parseTypeTag("0x1::cedra_coin::CedraCoin"),
+  );
 }
 
 /**

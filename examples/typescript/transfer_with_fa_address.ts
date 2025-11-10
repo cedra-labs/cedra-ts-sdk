@@ -96,7 +96,7 @@ const example = async () => {
     },
     options: {
       maxGasAmount: 5000,
-      faAddress: parseTypeTag("0x1::CedraCoin::cedra"),
+      faAddress: parseTypeTag(CEDRA_COIN),
     },
   });
 
