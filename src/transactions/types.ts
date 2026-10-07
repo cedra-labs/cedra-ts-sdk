@@ -17,6 +17,7 @@ import {
 } from "./instances";
 import { AnyNumber, HexInput, MoveFunctionGenericTypeParam, MoveFunctionId, MoveStructId, MoveValue } from "../types";
 import { TypeTag } from "./typeTag";
+import { FaAddress } from "./faAddress";
 import { AccountAuthenticator } from "./authenticator/account";
 import { SimpleTransaction } from "./instances/simpleTransaction";
 import { MultiAgentTransaction } from "./instances/multiAgentTransaction";
@@ -118,7 +119,14 @@ export type InputGenerateTransactionOptions = {
   gasUnitPrice?: number;
   expireTimestamp?: number;
   accountSequenceNumber?: AnyNumber;
-  faAddress?: TypeTag;
+  /**
+   * Fee asset for this transaction.
+   * - `FaAddress` or `"address::symbol"` is converted to a TypeTag before signing
+   *   (`USDCT` → `address::usdct::USDCT`, native Cedra → `0x1::cedra_coin::CedraCoin`).
+   * - A `TypeTag` is signed as-is (same value encode/submit JSON accepts).
+   * Omitted defaults to native Cedra.
+   */
+  faAddress?: FaAddress | TypeTag | string;
 };
 
 /**

@@ -7,6 +7,7 @@
     "build": "tsc",
     "simple_transfer": "ts-node simple_transfer.ts",
     "transfer_with_fa_address": "ts-node transfer_with_fa_address.ts",
+    "transfer_custom_fa_address": "ts-node transfer_custom_fa_address.ts",
     "multi_agent_transfer": "ts-node multi_agent_transfer.ts",
     "simple_sponsored_transaction": "ts-node simple_sponsored_transaction.ts",
     "transfer_coin": "ts-node transfer_coin.ts",

@@ -84,8 +84,7 @@ import { isScriptDataInput } from "./helpers";
 import { SimpleTransaction } from "../instances/simpleTransaction";
 import { MultiAgentTransaction } from "../instances/multiAgentTransaction";
 import { getFunctionParts } from "../../utils/helpers";
-import { TypeTag } from "../typeTag";
-import { parseTypeTag } from "../typeTag/parser";
+import { faAddressToTypeTag } from "../faAddress";
 
 /**
  * Builds a transaction payload based on the provided arguments and returns a transaction payload.
@@ -428,7 +427,7 @@ export async function generateRawTransaction(args: {
     BigInt(gasUnitPrice),
     BigInt(expireTimestamp),
     new ChainId(chainId),
-    faAddress ?? parseTypeTag("0x1::cedra_coin::CedraCoin"),
+    faAddressToTypeTag(faAddress),
   );
 }
 

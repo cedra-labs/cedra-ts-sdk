@@ -1,6 +1,7 @@
 // Copyright © Cedra Foundation
 // SPDX-License-Identifier: Apache-2.0
 
+export * from "./faAddress";
 export * from "./authenticator";
 export * from "./instances";
 export * from "./transactionBuilder";

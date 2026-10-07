@@ -9,11 +9,10 @@ import {
   AccountAddress,
   Cedra,
   CedraConfig,
+  FaAddress,
   InputViewFunctionJsonData,
   Network,
   NetworkToNetworkName,
-  parseTypeTag,
-  TypeTag,
 } from "@cedra-labs/ts-sdk";
 import dotenv from "dotenv";
 dotenv.config();
@@ -96,7 +95,13 @@ const example = async () => {
     },
     options: {
       maxGasAmount: 5000,
-      faAddress: parseTypeTag(CEDRA_COIN),
+      // Fee asset. FaAddress is address + symbol; the SDK signs it as a TypeTag.
+      // Native Cedra → 0x1::cedra_coin::CedraCoin.
+      faAddress: FaAddress.nativeCedra(),
+      // FA coin → address::<lowercase(symbol)>::<symbol>, e.g. 0xc745…::usdct::USDCT.
+      // faAddress: FaAddress.fromString(
+      //   "0xc745ffa4f97fa9739fae0cb173996f70bb8e4b0310fa781ccca2f7dc13f7db06::USDCT",
+      // ),
     },
   });
 
